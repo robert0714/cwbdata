@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  ap:
+    container_name: wether
+    image: ${docker.repository.name}:${project.version}
+    volumes: 
+      - $PWD/wether/data:/root/wether/data
+    environment: 
+      - EXTRA_OPTS="--lower_case_table_names=1"
+      - TZ=Asia/Taipei
+    ports: 
+      - "8080:8080"    
+   
+     
+    

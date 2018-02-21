@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  ap:
+    container_name: wether 
+    image: localhost:5000/robert0714/weather:1.0-SNAPSHOT
+    volumes: 
+      - $PWD/weather/data:/root/weather/data 
+    environment: 
+      - TZ=Asia/Taipei
+    ports: 
+      - "8080:8080"   
+     
+    
