@@ -75,54 +75,55 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.23.0</version>
+				<configuration>
+					<images>
+						<image>
+							<name>${docker.repository.name}:${timestamp}</name>
+							<alias>${project.artifactId}</alias>
+							<build>
+								<from>robert0714/oracle-java-8:8u151</from>
+								<maintainer>robert0714</maintainer>
+								<assembly>
+									<descriptor>docker-assembly.xml</descriptor>
+								</assembly>
+								<ports>
+									<port>8080</port>
+								</ports>
+								<cmd>
+									<exec>
+										<arg>java</arg>
+										<arg>-jar</arg>
+										<arg>/maven/${project.build.finalName}.jar</arg>
+										<arg>--java.security.egd=file:/dev/./urandom </arg>
+										<!-- docker-compose -f src/main/docker/docker-compose.yml up -d -->
+									</exec>
+								</cmd>
+							</build>
+							<run>
+								<namingStrategy>alias</namingStrategy>
+								<ports>
+									<port>${docker.port}:8080</port>
+								</ports>
+								<volumes>
+									<bind>
+										<volume>${user.home}/logs:/root/logs:ro</volume>
+									</bind>
+								</volumes>
+								<log>
+									<prefix>${project.artifactId}</prefix>
+									<color>cyan</color>
+								</log>
+							</run>
+						</image>
+					</images>
+				</configuration>
+			</plugin>
 		</plugins>
-		<plugin>
-			<groupId>io.fabric8</groupId>
-			<artifactId>docker-maven-plugin</artifactId>
-			<version>0.23.0</version>
-			<configuration>
-				<images>
-					<image>
-						<name>${docker.repository.name}:${timestamp}</name>
-						<alias>${project.artifactId}</alias>
-						<build>
-							<from>robert0714/oracle-java-8:8u151</from>
-							<maintainer>robert0714</maintainer>
-							<assembly>
-								<descriptor>docker-assembly.xml</descriptor>
-							</assembly>
-							<ports>
-								<port>8080</port>
-							</ports>
-							<cmd>
-								<exec>
-									<arg>java</arg>
-									<arg>-jar</arg>
-									<arg>/maven/${project.build.finalName}.jar</arg>
-									<arg>--java.security.egd=file:/dev/./urandom </arg>
-									<!-- docker-compose -f src/main/docker/docker-compose.yml up -d -->
-								</exec>
-							</cmd>
-						</build>
-						<run>
-							<namingStrategy>alias</namingStrategy>
-							<ports>
-								<port>${docker.port}:8080</port>
-							</ports>
-							<volumes>
-								<bind>
-									<volume>${user.home}/logs:/root/logs:ro</volume>
-								</bind>
-							</volumes>
-							<log>
-								<prefix>${project.artifactId}</prefix>
-								<color>cyan</color>
-							</log>
-						</run>
-					</image>
-				</images>
-			</configuration>
-		</plugin>
+
 	</build>
 
 	<repositories>
