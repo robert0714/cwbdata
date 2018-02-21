@@ -5,6 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
@@ -39,6 +40,7 @@ public class CwbOpenData {
 	private String scope;
 
 	@JacksonXmlProperty(localName = "dataset")
+	@JsonProperty(value = "dataset")
 	private DataSet dataset;
 
 	public String getId() {

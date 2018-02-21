@@ -21,7 +21,7 @@ public class CwbOpenDataTest  extends BaseModelTest{
 		basicConvertTest("/F-D0047-071.xml", CwbOpenData.class);
 	}
 	@Test
-//	@Ignore
+	@Ignore
 	public void testOpenDataConvert3() throws Exception {  	 
 		basicConvertTest("/F-C0032-001/F-C0032-001.xml", CwbOpenData.class);
 	}

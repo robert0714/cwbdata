@@ -1,10 +1,8 @@
 package tw.gov.cwb.model;
-
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
+ 
+ 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude; 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -20,4 +18,22 @@ public class DataSet {
 	@JacksonXmlProperty(localName = "location")
 	@JacksonXmlElementWrapper(useWrapping = false)
 	private Location[] locations;
+
+	public DataSetInfo getInfo() {
+		return info;
+	}
+
+	public void setInfo(DataSetInfo info) {
+		this.info = info;
+	}
+
+	public Location[] getLocations() {
+		return locations;
+	}
+
+	public void setLocations(Location[] locations) {
+		this.locations = locations;
+	}
+	
+ 
 }

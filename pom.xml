@@ -14,14 +14,31 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.9.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>1.5.10.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<spring-cloud.version>Dalston.SR5</spring-cloud.version>
+		<!-- windows要先安裝Docker-toolbox -->
+		<!-- https://download.docker.com/win/stable/DockerToolbox.exe -->
+		<!-- mvn docker:help -->
+		<!-- docker-machine rm default -->
+		<!-- docker-machine create \ -\ -virtualbox-memory 4096 default -->
+		<!-- eval $( docker-machine env default ) -->
+		<!-- mvn clean package docker:build -->
+		<!-- mvn docker:start -->
+		<!-- For Docker hub leave empty; use "localhost:5000/" for a local Docker 
+			Registry -->
+		<docker.registry.name>localhost:5000/</docker.registry.name>
+		<docker.repository.name>${docker.registry.name}robert0714/${project.artifactId}</docker.repository.name>
+		<docker.host.address>192.168.99.100</docker.host.address>
+		<docker.port>8080</docker.port>
 	</properties>
 
 	<dependencies>
@@ -33,19 +50,23 @@
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-xml</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.6</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>1.23.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -55,7 +76,107 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<plugin>
+			<groupId>io.fabric8</groupId>
+			<artifactId>docker-maven-plugin</artifactId>
+			<version>0.23.0</version>
+			<configuration>
+				<images>
+					<image>
+						<name>${docker.repository.name}:${timestamp}</name>
+						<alias>${project.artifactId}</alias>
+						<build>
+							<from>robert0714/oracle-java-8:8u151</from>
+							<maintainer>robert0714</maintainer>
+							<assembly>
+								<descriptor>docker-assembly.xml</descriptor>
+							</assembly>
+							<ports>
+								<port>8080</port>
+							</ports>
+							<cmd>
+								<exec>
+									<arg>java</arg>
+									<arg>-jar</arg>
+									<arg>/maven/${project.build.finalName}.jar</arg>
+									<arg>--java.security.egd=file:/dev/./urandom </arg>
+									<!-- docker-compose -f src/main/docker/docker-compose.yml up -d -->
+								</exec>
+							</cmd>
+						</build>
+						<run>
+							<namingStrategy>alias</namingStrategy>
+							<ports>
+								<port>${docker.port}:8080</port>
+							</ports>
+							<volumes>
+								<bind>
+									<volume>${user.home}/logs:/root/logs:ro</volume>
+								</bind>
+							</volumes>
+							<log>
+								<prefix>${project.artifactId}</prefix>
+								<color>cyan</color>
+							</log>
+						</run>
+					</image>
+				</images>
+			</configuration>
+		</plugin>
 	</build>
 
-
+	<repositories>
+		<repository>
+			<id>spring-releases</id>
+			<name>Spring Releases</name>
+			<url>https://repo.spring.io/libs-release</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-releases</id>
+			<name>Spring Releases</name>
+			<url>https://repo.spring.io/libs-release</url>
+		</pluginRepository>
+	</pluginRepositories>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<docker.registry.name>localhost:5000/</docker.registry.name>
+			</properties>
+		</profile>
+		<profile>
+			<id>lab</id>
+			<properties>
+				<docker.registry.name>172.21.3.105:5000/</docker.registry.name>
+				<docker.port>8161</docker.port>
+			</properties>
+		</profile>
+		<profile>
+			<id>staging</id>
+			<properties>
+				<docker.registry.name>172.21.1.63:5000/</docker.registry.name>
+				<docker.port>8161</docker.port>
+			</properties>
+		</profile>
+		<profile>
+			<id>production</id>
+			<properties>
+				<docker.registry.name>172.21.11.63:5000/</docker.registry.name>
+				<docker.port>8161</docker.port>
+			</properties>
+		</profile>
+	</profiles>
 </project>
