@@ -14,9 +14,8 @@ import tw.gov.cwb.model.CwbOpenData;
 public class WetherService {
 	private RestTemplate restTemplate;
 	private XmlMapper xmlMapper;
-	private String resource = "http://opendata.cwb.gov.tw/opendataapi?dataid=F-D0047-071&authorizationkey=CWB-F85F7030-762F-4B20-B961-6F1EF7DEEF5A";
-	//一般天氣預報-七天天氣預報	F-C0032-003
-	//新北市未來1週天氣預報 	F-D0047-071
+	private String resource = "http://opendata.cwb.gov.tw/opendataapi?dataid=F-C0032-001&authorizationkey=CWB-F85F7030-762F-4B20-B961-6F1EF7DEEF5A";
+	//F-C0032-001,F-C0032-005
 	public WetherService() {
 		super();
 		JacksonXmlModule module = new JacksonXmlModule();

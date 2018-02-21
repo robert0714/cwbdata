@@ -2,6 +2,7 @@ package tw.gov.cwb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
@@ -11,9 +12,11 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 public class Location {
 	@JacksonXmlProperty(localName = "locationName")
 	private String name;
+	 
 	
 	@JacksonXmlProperty(localName = "weatherElement")
-	private Weather weather;
+	@JacksonXmlElementWrapper(useWrapping = false)
+	private Weather[] weather;
 
 	public String getName() {
 		return name;
@@ -23,13 +26,14 @@ public class Location {
 		this.name = name;
 	}
 
-	public Weather getWeather() {
+	public Weather[] getWeather() {
 		return weather;
 	}
 
-	public void setWeather(Weather weather) {
+	public void setWeather(Weather[] weather) {
 		this.weather = weather;
 	}
+ 
 	
 	
 }
